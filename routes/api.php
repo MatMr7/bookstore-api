@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -9,6 +10,9 @@ Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::delete('logout', [AuthController::class, 'logOut']);
+
+    Route::resource('stores', StoreController::class)
+        ->only('index','store', 'show', 'update', 'destroy');
 });
 
 Route::get('/', function () {
