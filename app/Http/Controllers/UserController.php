@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain\User\Services\UserService;
 use App\Http\Requests\User\CreateUserRequest;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends Controller
 {
@@ -22,6 +23,6 @@ class UserController extends Controller
             password: $request->input('password'),
         );
 
-        return response()->json($newUser);
+        return response()->json($newUser, Response::HTTP_CREATED);
     }
 }
