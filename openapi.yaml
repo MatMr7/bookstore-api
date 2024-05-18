@@ -1,0 +1,83 @@
+openapi: 3.0.3
+info:
+  title: Book Store Api
+  description: Book Store Api
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8081/'
+paths:
+  /api/register:
+    post:
+      summary: register new user
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        422:
+          description: Validation errro
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+
+components:
+  schemas:
+    UserRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          example: johndoe@mail.com
+        name:
+          type: string
+          example: John Doe
+        password:
+          type: string
+          example: 123ASd34
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        email:
+          type: string
+          example: johndoe@mail.com
+        name:
+          type: string
+          example: John Doe
+        created_at:
+          type: string
+          format: date-time
+          example: '2024-05-18T15:16:26.000000Z'
+        updated:
+          type: string
+          format: date-time
+          example: '2024-05-18T15:16:26.000000Z'
+    ValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: The email has already been taken.
+        errors:
+          type: object
+          properties:
+            email:
+              type: array
+              items:
+                type: string
+                example: The email has already been taken.
+
+
+
+
+
