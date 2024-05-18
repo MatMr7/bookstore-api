@@ -21,4 +21,12 @@ class UserRepository
 
         return $user;
     }
+
+    public function findOneBy(array $criteria): ?User
+    {
+        /** @var User $user */
+        $user =  User::query()->where($criteria)->first();
+        
+        return $user;
+    }
 }

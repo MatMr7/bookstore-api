@@ -5,10 +5,17 @@ info:
   version: 1.0.0
 servers:
   - url: 'http://localhost:8081/'
+security:
+  - BearerAuth: []
 paths:
   /api/register:
     post:
-      summary: register new user
+      summary: Register new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
       responses:
         200:
           description: Successful operation
@@ -17,18 +24,67 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserResponse'
         422:
-          description: Validation errro
+          description: Validation error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ValidationError'
+  /api/login:
+    post:
+      summary: Login
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UserRequest'
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        422:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        401:
+          description: Credentials does not match
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicError'
+  /api/logout:
+    delete:
+      summary: Logout
+      responses:
+        204:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicError'
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+
 
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
   schemas:
     UserRequest:
       type: object
@@ -62,6 +118,25 @@ components:
           type: string
           format: date-time
           example: '2024-05-18T15:16:26.000000Z'
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          example: johndoe@mail.com
+        password:
+          type: string
+          example: 123445321
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: tp30A8gRg0P7tKDvmLHqJmW6F44oOtaqTrAyAdJ5ab47f101
+        expires_at:
+          type: string
+          format: date-time
+          example: '2024-05-18T15:16:26.000000Z'
     ValidationError:
       type: object
       properties:
@@ -76,6 +151,12 @@ components:
               items:
                 type: string
                 example: The email has already been taken.
+    BasicError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Error message.
 
 
 
