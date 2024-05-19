@@ -18,4 +18,4 @@ The application will run in the port 8081
 
 #### This projected is documented with openapi 3.0, the docs are  in the openapi.yaml file.
 
-
+#### To check the documentation, set up your environment then go to <a>http://localhost:8081/api/documentation</a>
