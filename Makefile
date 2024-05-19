@@ -12,3 +12,5 @@ stop:
 	bash ./vendor/bin/sail stop
 dump-autoload:
 	docker-compose exec app composer dump-autoload
+composer-install:
+	docker-compose exec app composer dump-autoload
