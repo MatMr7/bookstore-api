@@ -113,7 +113,7 @@ class StoreControllerTest extends TestCase
         $this->assertDatabaseHas('stores', $storeData);
     }
 
-    public function deleteStore()
+    public function testDeleteStore()
     {
         $user = UserFactory::new()->create();
 

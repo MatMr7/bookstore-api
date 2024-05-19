@@ -7,7 +7,6 @@ servers:
   - url: 'http://localhost:8081/'
 security:
   - BearerAuth: []
-
 tags:
   - name: auth
     description: |
@@ -15,6 +14,9 @@ tags:
   - name: store
     description: |
       Store resources
+  - name: book
+    description: |
+      Book resources
 paths:
   /api/register:
     post:
@@ -92,6 +94,136 @@ paths:
             application/json:
               schema:
                 type: object
+  /api/books/{bookId}:
+    get:
+      tags:
+        - book
+      summary: Get book
+      parameters:
+        - name: bookId
+          schema:
+            type: integer
+          in: path
+          required: true
+          description: Numeric id of the book
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        404:
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicError'
+    put:
+      tags:
+        - book
+      summary: Update book
+      parameters:
+        - name: bookId
+          schema:
+            type: integer
+          in: path
+          required: true
+          description: Numeric id of the book
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateBookRequest'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        404:
+          description: Resource not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicError'
+        422:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+    delete:
+      tags:
+        - book
+      summary: Delete book
+      parameters:
+        - name: storeId
+          schema:
+            type: integer
+          in: path
+          required: true
+          description: Numeric id of the book
+      responses:
+        204:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicError'
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+  /api/books:
+    post:
+      tags:
+        - book
+      summary: Create Book
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateBookRequest'
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponse'
+        422:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+    get:
+      tags:
+        - book
+      summary: List Books
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListBooksResponse'
+        422:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
   /api/stores:
     post:
       tags:
@@ -101,7 +233,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateStoreRequest'
+              $ref: '#/components/schemas/CreateUpdateStoreRequest'
       responses:
         200:
           description: Successful operation
@@ -109,12 +241,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StoreResponse'
-        404:
-          description: Resource not found
+        422:
+          description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BasicError'
+                $ref: '#/components/schemas/ValidationError'
     get:
       tags:
         - store
@@ -136,7 +268,7 @@ paths:
     get:
       tags:
         - store
-      summary: Create store
+      summary: Get store by Id
       parameters:
         - name: storeId
           schema:
@@ -151,6 +283,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/StoreResponse'
+
     put:
       tags:
         - store
@@ -162,6 +295,11 @@ paths:
           in: path
           required: true
           description: Numeric id of the store
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUpdateStoreRequest'
       responses:
         200:
           description: Successful operation
@@ -264,7 +402,147 @@ components:
           type: string
           format: date-time
           example: '2024-05-18T15:16:26.000000Z'
-    CreateStoreRequest:
+    CreateUpdateBookRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Book name"
+        isbn:
+          type: integer
+          example: 1234
+        value:
+          type: number
+          format: float
+          example: 14.2
+        store_ids:
+          type: array
+          items:
+            type: integer
+          example: [ 14, 15, 16 ]
+          nullable: true
+    BookResponse:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Company changed name"
+        isbn:
+          type: integer
+          example: 1234
+        value:
+          type: number
+          format: float
+          example: 14.2
+        updated_at:
+          type: string
+          format: date-time
+          example: "2024-05-18T23:15:26.000000Z"
+        created_at:
+          type: string
+          format: date-time
+          example: "2024-05-18T23:15:26.000000Z"
+        id:
+          type: integer
+          example: 2
+        stores:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 14
+              name:
+                type: string
+                example: "Company name"
+              address:
+                type: string
+                example: "32, My Street, Kingston, New York 12401"
+              is_active:
+                type: boolean
+                example: true
+              created_at:
+                type: string
+                format: date-time
+                example: "2024-05-18T23:13:48.000000Z"
+              updated_at:
+                type: string
+                format: date-time
+                example: "2024-05-18T23:13:48.000000Z"
+              pivot:
+                type: object
+                properties:
+                  book_id:
+                    type: integer
+                    example: 2
+                  store_id:
+                    type: integer
+                    example: 14
+    ListBooksResponse:
+      type: object
+      properties:
+        current_page:
+          type: integer
+          example: 1
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookResponse'
+        first_page_url:
+          type: string
+          format: uri
+          example: "localhost:8081/api/books?page=1"
+        from:
+          type: integer
+          example: 1
+        last_page:
+          type: integer
+          example: 1
+        last_page_url:
+          type: string
+          format: uri
+          example: "localhost:8081/api/books?page=1"
+        links:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                format: uri
+                nullable: true
+                example: null
+              label:
+                type: string
+                example: "Previous"
+              active:
+                type: boolean
+                example: false
+        next_page_url:
+          type: string
+          format: uri
+          nullable: true
+          example: null
+        path:
+          type: string
+          format: uri
+          example: "localhost:8081/api/books"
+        per_page:
+          type: integer
+          example: 10
+        prev_page_url:
+          type: string
+          format: uri
+          nullable: true
+          example: null
+        to:
+          type: integer
+          example: 1
+        total:
+          type: integer
+          example: 1
+    CreateUpdateStoreRequest:
       type: object
       properties:
         name:
